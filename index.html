@@ -2,6 +2,40 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#007E7A">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script>
+        /* Detecção do dispositivo: aplicada antes de desenhar a tela */
+        (function(){
+            function detectar(){
+                var d=document.documentElement;
+                var w=Math.min(window.innerWidth||d.clientWidth, (window.screen&&screen.width)||9999);
+                var toque=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
+                var ua=navigator.userAgent||"";
+                var tabUA0=/iPad|Tablet/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua))||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+                var celUA=!tabUA0&&/Android.+Mobile|iPhone|iPod|Windows Phone|Mobi/i.test(ua);
+                var tabUA=tabUA0;
+                var tipo;
+                if(celUA||(!tabUA&&w<=600)) tipo="celular";
+                else if(tabUA||w<=1100||(toque&&w<=1366&&!window.matchMedia("(pointer:fine)").matches)) tipo="tablet";
+                else tipo="computador";
+                var orient=(window.innerWidth>window.innerHeight)?"paisagem":"retrato";
+                d.classList.remove("disp-celular","disp-tablet","disp-computador","orient-paisagem","orient-retrato");
+                d.classList.add("disp-"+tipo,"orient-"+orient);
+                d.setAttribute("data-dispositivo",tipo);
+                if(toque) d.classList.add("disp-toque");
+                window.dispositivoAtual=tipo;
+                return tipo;
+            }
+            window.detectarDispositivo=detectar;
+            detectar();
+            var t;function agendar(){clearTimeout(t);t=setTimeout(function(){var antes=window.dispositivoAtual;var agora=detectar();if(antes!==agora&&typeof window.aoMudarDispositivo==="function")window.aoMudarDispositivo(agora,antes);},120);}
+            window.addEventListener("resize",agendar);
+            window.addEventListener("orientationchange",agendar);
+        })();
+    </script>
     <title>SIAM - Apontamentos</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,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">
     <link rel="apple-touch-icon" href="data:image/png;base64,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">
@@ -1159,6 +1193,71 @@
             .modal-filtros-topo{padding:12px 14px;}
             .modal-filtros-conteudo{padding:12px 14px 14px;}
         }
+        /* ================= LAYOUT POR DISPOSITIVO (detectado via JS) ================= */
+        html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+        html.disp-celular body,html.disp-tablet body{overscroll-behavior:none;}
+        html.disp-toque .menu-lateral:hover{box-shadow:2px 0 10px rgba(0,0,0,.08);}
+        /* ---------- Tablet e celular: menu em gaveta ---------- */
+        html.disp-celular .app,html.disp-tablet .app,html.disp-celular body.menu-fixado .app,html.disp-tablet body.menu-fixado .app{padding-left:0!important;flex-direction:column;height:100dvh;}
+        html.disp-celular .menu-lateral,html.disp-tablet .menu-lateral,html.disp-celular .menu-lateral:hover,html.disp-tablet .menu-lateral:hover,html.disp-celular body.menu-fixado .menu-lateral,html.disp-tablet body.menu-fixado .menu-lateral{position:fixed;display:flex;flex-direction:column;align-items:stretch;width:min(290px,84vw)!important;height:100%;padding:14px 12px calc(14px + env(safe-area-inset-bottom));overflow:hidden;transform:translateX(-105%);transition:transform .25s ease;}
+        html.disp-celular body.menu-mobile-aberto .menu-lateral,html.disp-tablet body.menu-mobile-aberto .menu-lateral{transform:none;box-shadow:12px 0 40px rgba(0,0,0,.3);}
+        html.disp-celular .menu-lateral .menu-label,html.disp-tablet .menu-lateral .menu-label,html.disp-celular .menu-lateral .menu-grupo,html.disp-tablet .menu-lateral .menu-grupo{opacity:1!important;pointer-events:auto;}
+        html.disp-celular .btn-menu-recolher,html.disp-tablet .btn-menu-recolher{display:none!important;}
+        html.disp-celular .menu-item,html.disp-tablet .menu-item{width:100%;white-space:nowrap;height:48px;min-height:48px;}
+        html.disp-celular .menu-backdrop,html.disp-tablet .menu-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:4400;opacity:0;pointer-events:none;transition:opacity .2s;}
+        html.disp-celular body.menu-mobile-aberto .menu-backdrop,html.disp-tablet body.menu-mobile-aberto .menu-backdrop{opacity:1;pointer-events:auto;}
+        html.disp-celular .btn-menu-mobile,html.disp-tablet .btn-menu-mobile{display:inline-flex!important;width:42px;min-width:42px;height:42px;padding:0;background:var(--card);color:var(--texto);border:1px solid var(--borda);}
+        html.disp-celular .topo,html.disp-tablet .topo{flex-direction:column;align-items:stretch;gap:10px;margin-bottom:12px;padding-top:env(safe-area-inset-top);}
+        html.disp-celular .topo-acoes,html.disp-tablet .topo-acoes{width:100%;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+        html.disp-celular .topo-acoes::-webkit-scrollbar,html.disp-tablet .topo-acoes::-webkit-scrollbar{display:none;}
+        html.disp-celular .topo-acoes>*,html.disp-tablet .topo-acoes>*{flex-shrink:0;width:auto!important;}
+        html.disp-tablet .conteudo{padding:14px 16px;}
+        html.disp-tablet .grid-cards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
+        html.disp-tablet .lista-cards-operacao.painel-operacao-minas,html.disp-tablet .lista-cards-operacao.painel-operacao-minas.modo-recolhido-global{grid-template-columns:repeat(2,minmax(0,1fr));}
+        html.disp-tablet.orient-paisagem .lista-cards-operacao.painel-operacao-minas,html.disp-tablet.orient-paisagem .lista-cards-operacao.painel-operacao-minas.modo-recolhido-global{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+        html.disp-tablet .controle-equipamentos-acoes{grid-template-columns:repeat(3,minmax(0,1fr));}
+        html.disp-tablet .controle-equipamentos-acoes button{width:100%;}
+        /* ---------- Operação: carrossel inferior (tablet e celular) ---------- */
+        html.disp-celular #telaOperacao .barra-acoes-operacao,html.disp-tablet #telaOperacao .barra-acoes-operacao{position:fixed;left:0!important;right:0;bottom:0;z-index:4300;margin:0;display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--card);border-top:1px solid var(--borda);box-shadow:0 -6px 20px rgba(0,0,0,.10);}
+        html.disp-celular #telaOperacao .barra-acoes-operacao>button,html.disp-tablet #telaOperacao .barra-acoes-operacao>button{flex:0 0 auto;scroll-snap-align:start;flex-direction:column;justify-content:center;gap:4px;height:58px;min-height:58px;min-width:92px;max-width:150px;padding:6px 12px;border-radius:12px;font-size:11.5px;line-height:1.15;text-align:center;white-space:normal;box-shadow:none;}
+        html.disp-celular #telaOperacao.ativa,html.disp-tablet #telaOperacao.ativa{padding-bottom:calc(84px + env(safe-area-inset-bottom));}
+        /* ---------- Celular ---------- */
+        html.disp-celular .conteudo{padding:10px;overflow-y:auto;}
+        html.disp-celular h1{font-size:19px;}
+        html.disp-celular .grid-cards{grid-template-columns:1fr!important;gap:12px;}
+        html.disp-celular .card{padding:14px;}
+        html.disp-celular .filtros{flex-direction:column;gap:10px;}
+        html.disp-celular .filtros .campo,html.disp-celular .campo,html.disp-celular .multi-filtro{width:100%;min-width:0!important;max-width:100%;flex-basis:100%;}
+        html.disp-celular input,html.disp-celular select,html.disp-celular .ms-gatilho{min-width:0!important;width:100%;font-size:16px;height:44px;}
+        html.disp-celular input[type=checkbox]{width:18px;height:18px;}
+        html.disp-celular button{min-height:44px;}
+        html.disp-celular .relogio-regressivo,html.disp-celular .btn-tema,html.disp-celular .btn-toggle,html.disp-celular .status-api{height:38px;min-height:38px;font-size:12px;padding:0 11px;}
+        html.disp-celular .status-api{max-width:240px;}
+        html.disp-celular #telaOperacao .cards-operacao{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px;}
+        html.disp-celular #telaOperacao .resumo-label{font-size:11px;gap:6px;}
+        html.disp-celular #telaOperacao .resumo-numero{font-size:20px;}
+        html.disp-celular #telaOperacao.ativa{overflow-y:auto;}
+        html.disp-celular .lista-cards-operacao.painel-operacao-minas,html.disp-celular .lista-cards-operacao.painel-operacao-minas.modo-recolhido-global{grid-template-columns:1fr!important;grid-auto-rows:auto;flex:none;overflow:visible;gap:12px;}
+        html.disp-celular .lista-cards-operacao.painel-operacao-minas .coluna-mina-operacao,html.disp-celular .lista-cards-operacao.modo-recolhido-global .coluna-mina-operacao{height:auto!important;max-height:none!important;overflow:visible;}
+        html.disp-celular .conteudo-mina-operacao{overflow:visible!important;flex:none;}
+        html.disp-celular .cabecalho-mina-operacao{position:sticky;top:0;z-index:5;}
+        html.disp-celular .cards-frota-operacao{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+        html.disp-celular #telaOperacao .barra-acoes-operacao>button{min-width:84px;font-size:11px;height:56px;min-height:56px;}
+        html.disp-celular .controle-equipamentos-acoes{grid-template-columns:1fr 1fr!important;}
+        html.disp-celular .controle-equipamentos-acoes input{grid-column:1/-1;}
+        html.disp-celular .controle-equipamentos-acoes button:last-child{grid-column:1/-1;}
+        html.disp-celular .controle-frota-conteudo{grid-template-columns:repeat(2,minmax(0,1fr));}
+        html.disp-celular .controle-mina-cabecalho,html.disp-celular .controle-frota-cabecalho{flex-wrap:wrap;}
+        html.disp-celular .programa-df-acoes{display:grid;grid-template-columns:1fr 1fr;}
+        html.disp-celular .programa-df-acoes input[type=file]{grid-column:1/-1;min-width:0;}
+        html.disp-celular .programa-df-acoes button:last-child{grid-column:1/-1;}
+        html.disp-celular .config-visual-grid{grid-template-columns:1fr 1fr;gap:10px;}
+        html.disp-celular #telaConfigVisual .card>button{width:100%;margin:0 0 8px;}
+        html.disp-celular .modal-filtros-caixa{width:100%!important;max-height:calc(100dvh - 20px)!important;border-radius:14px!important;}
+        html.disp-celular .modal-filtros-conteudo .filtros{grid-template-columns:1fr!important;}
+        html.disp-celular .modal-filtros-conteudo .btn-limpar{width:100%;}
+        html.disp-celular th,html.disp-celular td{font-size:12px;padding:7px 9px;}
+        html.disp-celular #telaTabelas .container-tabela{min-height:55vh;}
 </style>
 </head>
 
@@ -3677,6 +3776,8 @@ function prepararDados(dados) {
             document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharMenuMobile();});
         })();
 
+    
+        window.aoMudarDispositivo=function(agora){if(agora==="computador")fecharMenuMobile();document.querySelectorAll(".ms-select.aberto").forEach(x=>x.classList.remove("aberto"));};
     </script>
 
 </body>
