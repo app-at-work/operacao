@@ -11,12 +11,11 @@
         (function(){
             function detectar(){
                 var d=document.documentElement;
-                var w=Math.min(window.innerWidth||d.clientWidth, (window.screen&&screen.width)||9999);
+                var w=Math.min(window.innerWidth||d.clientWidth,(window.screen&&screen.width)||9999);
                 var toque=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
                 var ua=navigator.userAgent||"";
-                var tabUA0=/iPad|Tablet/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua))||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
-                var celUA=!tabUA0&&/Android.+Mobile|iPhone|iPod|Windows Phone|Mobi/i.test(ua);
-                var tabUA=tabUA0;
+                var tabUA=/iPad|Tablet/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua))||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+                var celUA=!tabUA&&/Android.+Mobile|iPhone|iPod|Windows Phone|Mobi/i.test(ua);
                 var tipo;
                 if(celUA||(!tabUA&&w<=600)) tipo="celular";
                 else if(tabUA||w<=1100||(toque&&w<=1366&&!window.matchMedia("(pointer:fine)").matches)) tipo="tablet";
@@ -1195,9 +1194,7 @@
         }
         /* ================= LAYOUT POR DISPOSITIVO (detectado via JS) ================= */
         html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
-        html.disp-celular body,html.disp-tablet body{overscroll-behavior:none;}
         html.disp-toque .menu-lateral:hover{box-shadow:2px 0 10px rgba(0,0,0,.08);}
-        /* ---------- Tablet e celular: menu em gaveta ---------- */
         html.disp-celular .app,html.disp-tablet .app,html.disp-celular body.menu-fixado .app,html.disp-tablet body.menu-fixado .app{padding-left:0!important;flex-direction:column;height:100dvh;}
         html.disp-celular .menu-lateral,html.disp-tablet .menu-lateral,html.disp-celular .menu-lateral:hover,html.disp-tablet .menu-lateral:hover,html.disp-celular body.menu-fixado .menu-lateral,html.disp-tablet body.menu-fixado .menu-lateral{position:fixed;display:flex;flex-direction:column;align-items:stretch;width:min(290px,84vw)!important;height:100%;padding:14px 12px calc(14px + env(safe-area-inset-bottom));overflow:hidden;transform:translateX(-105%);transition:transform .25s ease;}
         html.disp-celular body.menu-mobile-aberto .menu-lateral,html.disp-tablet body.menu-mobile-aberto .menu-lateral{transform:none;box-shadow:12px 0 40px rgba(0,0,0,.3);}
@@ -1217,11 +1214,9 @@
         html.disp-tablet.orient-paisagem .lista-cards-operacao.painel-operacao-minas,html.disp-tablet.orient-paisagem .lista-cards-operacao.painel-operacao-minas.modo-recolhido-global{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
         html.disp-tablet .controle-equipamentos-acoes{grid-template-columns:repeat(3,minmax(0,1fr));}
         html.disp-tablet .controle-equipamentos-acoes button{width:100%;}
-        /* ---------- Operação: carrossel inferior (tablet e celular) ---------- */
         html.disp-celular #telaOperacao .barra-acoes-operacao,html.disp-tablet #telaOperacao .barra-acoes-operacao{position:fixed;left:0!important;right:0;bottom:0;z-index:4300;margin:0;display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--card);border-top:1px solid var(--borda);box-shadow:0 -6px 20px rgba(0,0,0,.10);}
         html.disp-celular #telaOperacao .barra-acoes-operacao>button,html.disp-tablet #telaOperacao .barra-acoes-operacao>button{flex:0 0 auto;scroll-snap-align:start;flex-direction:column;justify-content:center;gap:4px;height:58px;min-height:58px;min-width:92px;max-width:150px;padding:6px 12px;border-radius:12px;font-size:11.5px;line-height:1.15;text-align:center;white-space:normal;box-shadow:none;}
         html.disp-celular #telaOperacao.ativa,html.disp-tablet #telaOperacao.ativa{padding-bottom:calc(84px + env(safe-area-inset-bottom));}
-        /* ---------- Celular ---------- */
         html.disp-celular .conteudo{padding:10px;overflow-y:auto;}
         html.disp-celular h1{font-size:19px;}
         html.disp-celular .grid-cards{grid-template-columns:1fr!important;gap:12px;}
@@ -1258,6 +1253,19 @@
         html.disp-celular .modal-filtros-conteudo .btn-limpar{width:100%;}
         html.disp-celular th,html.disp-celular td{font-size:12px;padding:7px 9px;}
         html.disp-celular #telaTabelas .container-tabela{min-height:55vh;}
+        /* ===== Modal de apontamentos do equipamento ===== */
+        #modalApontamentosEquipamento .modal-filtros-caixa{width:min(1100px,100%)!important;}
+        .apontamentos-titulos{display:flex;flex-direction:column;gap:2px;min-width:0;}
+        .apontamentos-titulos .texto-ajuda{margin:0;}
+        .apontamentos-conteudo{padding:0!important;display:flex;flex-direction:column;overflow:hidden!important;}
+        .apontamentos-tabela-wrap{flex:1;min-height:0;overflow:auto;}
+        .apontamentos-tabela{width:100%;min-width:760px;border-collapse:collapse;}
+        .apontamentos-tabela th{position:sticky;top:0;z-index:2;background:var(--cor-principal);color:#fff;text-align:left;font-size:12.5px;padding:10px 12px;white-space:nowrap;}
+        .apontamentos-tabela td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--borda);white-space:nowrap;vertical-align:middle;}
+        .apontamentos-tabela td.col-razao{white-space:normal;min-width:220px;max-width:380px;}
+        .apontamentos-tabela .status-texto-card{font-size:11.5px;padding:3px 9px;}
+        html.disp-celular .apontamentos-tabela{min-width:680px;}
+        html.disp-celular .apontamentos-tabela td,html.disp-celular .apontamentos-tabela th{font-size:12px;padding:8px 9px;}
 </style>
 </head>
 
@@ -1659,6 +1667,7 @@
             </section>
 
             <div id="modalLegendaConfiguracoesVisuais" class="modal-filtros-overlay" onclick="fecharModalLegendaConfiguracoesVisuaisPorFundo(event)"><div class="modal-filtros-caixa" onclick="event.stopPropagation()"><div class="modal-filtros-topo"><h2>Legenda das Configurações Visuais Ativas</h2><button class="modal-filtros-fechar" onclick="fecharModalLegendaConfiguracoesVisuais()">×</button></div><div class="modal-filtros-conteudo"><div id="conteudoLegendaConfiguracoesVisuais"></div></div></div></div>
+            <div id="modalApontamentosEquipamento" class="modal-filtros-overlay" onclick="fecharModalApontamentosPorFundo(event)"><div class="modal-filtros-caixa" role="dialog" aria-modal="true" onclick="event.stopPropagation()"><div class="modal-filtros-topo"><div class="apontamentos-titulos"><h2 id="modalApontamentosTitulo">Apontamentos</h2><span id="modalApontamentosResumo" class="texto-ajuda"></span></div><button class="modal-filtros-fechar" onclick="fecharModalApontamentosEquipamento()" title="Fechar">×</button></div><div class="modal-filtros-conteudo apontamentos-conteudo"><div class="apontamentos-tabela-wrap"><table id="tabelaApontamentosEquipamento" class="apontamentos-tabela"><thead></thead><tbody></tbody></table></div></div></div></div>
             <div id="modalFiltros" class="modal-filtros-overlay" onclick="fecharModalFiltrosPorFundo(event)">
                 <div class="modal-filtros-caixa" role="dialog" aria-modal="true" aria-labelledby="modalFiltrosTitulo">
                     <div class="modal-filtros-topo">
@@ -3061,7 +3070,7 @@ function prepararDados(dados) {
         function montarBadgeRecuperacaoOperacao(a,b,cls,label){if(a===null||a===undefined||!isFinite(a)||b===null||b===undefined||!isFinite(b))return `<span class="${cls}">${label?label+': ':''}-</span>`;const d=a-b;if(d>0.004)return `<span class="${cls} subindo">${label?label+': ':''}↑ +${d.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})} p.p.</span>`;if(d<-0.004)return `<span class="${cls} descendo">${label?label+': ':''}↓ ${d.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})} p.p.</span>`;return `<span class="${cls}">${label?label+': ':''}→ 0,00 p.p.</span>`;}
         function montarChipRecuperacaoOperacao(item,df){return montarBadgeRecuperacaoOperacao(df,calcularDFAnteriorEquipamentoOperacao(item),"meta-relacao-chip recuperacao-card-chip","Recuperação");}
         function montarCabecalhoGrupoOperacao(tipo,nome,itens){const df=calcularDFGrupoItensOperacao(itens),ant=calcularDFAnteriorGrupoOperacao(itens),prog=calcularProgramaMedioGrupoOperacao(itens),classe=prog!==null&&df!==null&&isFinite(df)?(df>=prog?"ok":"nok"):"";return `<div class="cabecalho-grupo-operacao"><span class="grupo-nome-operacao">${tipo}: ${escaparHtml(nome)}</span><span class="grupo-info-operacao"><span class="grupo-df-operacao ${classe}">DF ${formatarPercentualDF(df)}</span><span class="grupo-programa-df-operacao">Prog. DF ${formatarProgramaDFCard(prog)}</span>${montarBadgeRecuperacaoOperacao(df,ant,"grupo-recuperacao-operacao","")}</span></div>`;}
-        function montarHtmlCardOperacaoCompleto(item,modelo,dfTexto,botaoRecolherHtml,dfValor){const equipamentoSeguro=escaparHtml(item.equipamento),statusTexto=escaparHtml(item.status.texto||item.status.descricao||item.status.codigo),linhasTempo=montarLinhasTempoCategoria(item.temposCategoria),botaoRecolher=botaoRecolherHtml||"",programa=obterProgramaDFOperacaoParaItem(item),classeDF=obterClasseDFCard(dfValor,programa),chipProgramaDF=montarChipProgramaDFOperacao(programa),chipRecuperacao=montarChipRecuperacaoOperacao(item,dfValor);return `<div class="card-operacao-topo"><div class="card-operacao-equipamento">${equipamentoSeguro}</div><div class="acoes-card-operacao">${botaoRecolher}<button class="acao-tabela-icone" title="Abrir tabela filtrada" onclick="irParaTabelaEquipamento('${escaparAtributoJs(item.equipamento)}')"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div></div><div class="linha-status-operacao"><div class="status-atual-card"><span>Status:</span><span class="status-texto-card ${item.status.classe}">${statusTexto}</span></div></div><div class="meta-relacao-card"><span class="meta-relacao-chip">Modelo: ${escaparHtml(modelo)}</span><span class="meta-relacao-chip df-card-chip ${classeDF}">DF: ${escaparHtml(dfTexto)}</span>${chipProgramaDF}${chipRecuperacao}</div><div class="tempos-categoria">${linhasTempo}</div>`;}
+        function montarHtmlCardOperacaoCompleto(item,modelo,dfTexto,botaoRecolherHtml,dfValor){const equipamentoSeguro=escaparHtml(item.equipamento),statusTexto=escaparHtml(item.status.texto||item.status.descricao||item.status.codigo),linhasTempo=montarLinhasTempoCategoria(item.temposCategoria),botaoRecolher=botaoRecolherHtml||"",programa=obterProgramaDFOperacaoParaItem(item),classeDF=obterClasseDFCard(dfValor,programa),chipProgramaDF=montarChipProgramaDFOperacao(programa),chipRecuperacao=montarChipRecuperacaoOperacao(item,dfValor);return `<div class="card-operacao-topo"><div class="card-operacao-equipamento">${equipamentoSeguro}</div><div class="acoes-card-operacao">${botaoRecolher}<button class="acao-tabela-icone" title="Ver apontamentos" onclick="irParaTabelaEquipamento('${escaparAtributoJs(item.equipamento)}')"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div></div><div class="linha-status-operacao"><div class="status-atual-card"><span>Status:</span><span class="status-texto-card ${item.status.classe}">${statusTexto}</span></div></div><div class="meta-relacao-card"><span class="meta-relacao-chip">Modelo: ${escaparHtml(modelo)}</span><span class="meta-relacao-chip df-card-chip ${classeDF}">DF: ${escaparHtml(dfTexto)}</span>${chipProgramaDF}${chipRecuperacao}</div><div class="tempos-categoria">${linhasTempo}</div>`;}
         
         function montarCardsOperacao(lista) {
             atualizarBotaoModoVisualizacaoCardsOperacao();
@@ -3137,7 +3146,53 @@ function prepararDados(dados) {
         function escaparAtributoJs(valor) { return String(valor ?? "").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
         function montarLinhasTempoCategoria(temposCategoria) { if (!Array.isArray(temposCategoria) || temposCategoria.length === 0) return `<div class="tempo-categoria status-indefinido"><span class="tempo-categoria-nome">Tempo</span><span class="tempo-categoria-valor">-</span></div>`; return temposCategoria.map(item => `<div class="tempo-categoria ${escaparHtml(item.classe || 'status-indefinido')}"><span class="tempo-categoria-nome">${escaparHtml(item.texto || item.codigo)}</span><span class="tempo-categoria-valor">${escaparHtml(item.tempo)}</span></div>`).join(""); }
         function aplicarFiltroEquipamentoCompartilhado(equipamentos, origem) { const listaEquipamentos = Array.isArray(equipamentos) ? equipamentos.map(valor => String(valor).trim()).filter(valor => valor !== "") : []; selecionadosEquipamento = [...listaEquipamentos]; selecionadosEquipamentoOperacao = [...listaEquipamentos]; const buscaEquipamento = document.getElementById("buscaEquipamento"), buscaEquipamentoOperacao = document.getElementById("buscaEquipamentoOperacao"); if (buscaEquipamento) buscaEquipamento.value = ""; if (buscaEquipamentoOperacao) buscaEquipamentoOperacao.value = ""; renderizarMultiFiltro("equipamento", false); renderizarMultiFiltro("equipamentoOperacao", false); aplicarFiltrosTabela(); aplicarFiltrosOperacao(); }
-        function irParaTabelaEquipamento(equipamento) { if (!colunaEquipamento) return; abrirTela("tabelas"); aplicarFiltroEquipamentoCompartilhado([equipamento], "cardOperacao"); }
+        function irParaTabelaEquipamento(equipamento) { abrirModalApontamentosEquipamento(equipamento); }
+        function obterColunaRazaoDescricao() { return encontrarColuna(["razao descricao","razão descrição","descricao razao","razao desc","desc razao","razao"]); }
+        function abrirModalApontamentosEquipamento(equipamento) {
+            const modal = document.getElementById("modalApontamentosEquipamento"); if (!modal || !colunaEquipamento) return;
+            const eq = String(equipamento ?? "").trim();
+            const colRazao = obterColunaRazaoDescricao();
+            const colunas = [
+                { titulo: "Equipamento", coluna: colunaEquipamento },
+                { titulo: "Data Inicial", coluna: colunaDataInicial },
+                { titulo: "Data Final", coluna: colunaDataFinal },
+                { titulo: "Categoria Tipo", coluna: colunaCategoriaTipo },
+                { titulo: "Categoria Tempo", coluna: colunaCategoriaTempo },
+                { titulo: "Razão Descrição", coluna: colRazao }
+            ];
+            const registros = (dadosOriginais || []).filter(item => String(item[colunaEquipamento] ?? "").trim() === eq)
+                .sort((a, b) => obterDataReferenciaLancamento(b) - obterDataReferenciaLancamento(a));
+            document.getElementById("modalApontamentosTitulo").textContent = "Apontamentos: " + eq;
+            document.getElementById("modalApontamentosResumo").textContent = registros.length + " apontamento(s) no período consultado, do mais recente ao mais antigo" + (colRazao ? "" : " • coluna Razão Descrição não encontrada na API");
+            const thead = document.querySelector("#tabelaApontamentosEquipamento thead"), tbody = document.querySelector("#tabelaApontamentosEquipamento tbody");
+            thead.innerHTML = "<tr>" + colunas.map(c => `<th>${c.titulo}</th>`).join("") + "</tr>";
+            tbody.innerHTML = "";
+            if (!registros.length) { tbody.innerHTML = `<tr><td colspan="${colunas.length}">Nenhum apontamento encontrado.</td></tr>`; }
+            else {
+                const frag = document.createDocumentFragment();
+                registros.forEach(item => {
+                    const tr = document.createElement("tr");
+                    const status = obterStatusOperacao(colunaCategoriaTipo ? item[colunaCategoriaTipo] : "");
+                    colunas.forEach(c => {
+                        const td = document.createElement("td");
+                        const valor = c.coluna ? formatarValorTabela(c.coluna, item[c.coluna], item) : "";
+                        const vazio = valor === "" || valor === null || valor === undefined;
+                        if (c.titulo === "Categoria Tipo" && !vazio) { const sp = document.createElement("span"); sp.className = "status-texto-card " + status.classe; sp.textContent = valor; td.appendChild(sp); }
+                        else td.textContent = vazio ? "-" : valor;
+                        if (c.titulo === "Razão Descrição") td.className = "col-razao";
+                        tr.appendChild(td);
+                    });
+                    frag.appendChild(tr);
+                });
+                tbody.appendChild(frag);
+            }
+            modal.classList.add("aberto");
+            const wrap = modal.querySelector(".apontamentos-tabela-wrap"); if (wrap) wrap.scrollTop = 0;
+        }
+        function fecharModalApontamentosEquipamento() { const m = document.getElementById("modalApontamentosEquipamento"); if (m) m.classList.remove("aberto"); }
+        function fecharModalApontamentosPorFundo(event) { if (event && event.target && event.target.id === "modalApontamentosEquipamento") fecharModalApontamentosEquipamento(); }
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") fecharModalApontamentosEquipamento(); });
+
 
         function atualizarDashboard() {
             if (!document.getElementById("dashTotalRegistros")) return;
@@ -3500,7 +3555,7 @@ function prepararDados(dados) {
             if(!cfg)return;
             const largura=Number(cfg.largura)||2,corBorda=cfg.borda||"#0078d4",corSombra=cfg.sombra||corBorda;
             card.style.border=largura+"px solid "+corBorda;
-            card.style.boxShadow="0 0 0 5px "+hexParaRgba(corSombra,.32)+", 0 6px 14px "+hexParaRgba(corSombra,.18);
+            card.style.boxShadow="none"; /* sombra da Config. Visual removida: destaque apenas pela borda */
             card.style.setProperty("--cfg-sombra",hexParaRgba(corSombra,.55));
             if(cfg.pulsar!==false)card.classList.add("config-visual-pulsar");
         }
