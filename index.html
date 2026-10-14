@@ -694,7 +694,7 @@
         .config-visual-tabela{width:100%;border-collapse:collapse;background:var(--card);color:var(--texto);}
         .config-visual-tabela th,.config-visual-tabela td{padding:8px;border-bottom:1px solid var(--borda);font-size:13px;white-space:nowrap;}
         .card-operacao-item.config-visual-pulsar{animation:pulsarConfigVisual 1.25s infinite;}
-        @keyframes pulsarConfigVisual{0%{box-shadow:0 0 0 0 var(--cfg-sombra,rgba(0,126,122,.45));}65%{box-shadow:0 0 0 12px rgba(0,0,0,0);}100%{box-shadow:0 0 0 0 rgba(0,0,0,0);}}
+        @keyframes pulsarConfigVisual{0%{box-shadow:var(--cfg-sombra-fixa,0 0 0 0 transparent),0 0 0 0 var(--cfg-sombra,rgba(0,126,122,.45));}65%{box-shadow:var(--cfg-sombra-fixa,0 0 0 0 transparent),0 0 0 14px rgba(0,0,0,0);}100%{box-shadow:var(--cfg-sombra-fixa,0 0 0 0 transparent),0 0 0 0 rgba(0,0,0,0);}}
 
 
         .barra-acoes-tela{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:12px;flex-shrink:0;}
@@ -3548,16 +3548,22 @@ function prepararDados(dados) {
         function aplicarConfiguracaoVisualCard(card,item){
             if(!card||!item)return;
             card.style.border="none";
-            card.style.boxShadow="none";
+            card.style.removeProperty("box-shadow");
             card.style.removeProperty("--cfg-sombra");
+            card.style.removeProperty("--cfg-sombra-fixa");
             card.classList.remove("config-visual-pulsar");
             const cfg=obterConfiguracaoVisualAplicavel(item);
             if(!cfg)return;
             const largura=Number(cfg.largura)||2,corBorda=cfg.borda||"#0078d4",corSombra=cfg.sombra||corBorda;
             card.style.border=largura+"px solid "+corBorda;
-            card.style.boxShadow="none"; /* sombra da Config. Visual removida: destaque apenas pela borda */
-            card.style.setProperty("--cfg-sombra",hexParaRgba(corSombra,.55));
-            if(cfg.pulsar!==false)card.classList.add("config-visual-pulsar");
+            /* Sombra da Config. Visual somente quando Pulsar = Sim */
+            if(cfg.pulsar!==false){
+                const sombraFixa="0 0 0 5px "+hexParaRgba(corSombra,.32)+", 0 6px 14px "+hexParaRgba(corSombra,.18);
+                card.style.boxShadow=sombraFixa;
+                card.style.setProperty("--cfg-sombra-fixa",sombraFixa);
+                card.style.setProperty("--cfg-sombra",hexParaRgba(corSombra,.55));
+                card.classList.add("config-visual-pulsar");
+            }
         }
         function hexParaRgba(hex, alpha) {
             const limpo = String(hex || "#000000").replace("#", "");
