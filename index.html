@@ -1266,10 +1266,29 @@
         .apontamentos-tabela .status-texto-card{font-size:11.5px;padding:3px 9px;}
         html.disp-celular .apontamentos-tabela{min-width:680px;}
         html.disp-celular .apontamentos-tabela td,html.disp-celular .apontamentos-tabela th{font-size:12px;padding:8px 9px;}
+        /* ===== Modal de carregamento inicial da Operação ===== */
+        .modal-carregamento-overlay{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,30,30,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+        .modal-carregamento-overlay.aberto{display:flex;animation:fundoModal .18s ease;}
+        .modal-carregamento-caixa{width:min(360px,100%);background:var(--card);color:var(--texto);border:1px solid var(--borda);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.30);padding:28px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;animation:caixaModal .2s ease;}
+        .modal-carregamento-spinner{width:52px;height:52px;border-radius:50%;border:4px solid var(--cor-suave-2);border-top-color:var(--cor-principal);animation:girarCarregamento .85s linear infinite;}
+        .modal-carregamento-titulo{font-size:16px;font-weight:700;color:var(--texto);}
+        .modal-carregamento-sub{font-size:12.5px;color:var(--texto-secundario);min-height:16px;}
+        .modal-carregamento-barra{width:100%;height:6px;border-radius:999px;background:var(--cor-suave);overflow:hidden;position:relative;}
+        .modal-carregamento-barra::after{content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;border-radius:999px;background:var(--cor-principal);animation:barraCarregamento 1.2s ease-in-out infinite;}
+        @keyframes girarCarregamento{to{transform:rotate(360deg);}}
+        @keyframes barraCarregamento{0%{left:-40%;}100%{left:100%;}}
 </style>
 </head>
 
 <body>
+    <div id="modalCarregamentoOperacao" class="modal-carregamento-overlay aberto" role="alertdialog" aria-modal="true" aria-live="polite" aria-labelledby="modalCarregamentoTitulo">
+        <div class="modal-carregamento-caixa">
+            <div class="modal-carregamento-spinner" aria-hidden="true"></div>
+            <div class="modal-carregamento-titulo" id="modalCarregamentoTitulo">Aguardando carregamento dos dados</div>
+            <div class="modal-carregamento-sub" id="modalCarregamentoSub">Consultando API SIAM...</div>
+            <div class="modal-carregamento-barra" aria-hidden="true"></div>
+        </div>
+    </div>
     <div class="app">
         <aside class="menu-lateral" id="menuLateral">
             <div class="menu-cabecalho">
@@ -1776,15 +1795,40 @@ let segundosRestantes = TEMPO_ATUALIZACAO_SEGUNDOS;
             aplicarEstadoCabecalhoOperacao();
             renderizarControleEquipamentos();
             atualizarStatusApi("API: atualizando dados iniciais...", "alerta");
-            const consultaInicialOk = await consultarAPI(true);
-            if (consultaInicialOk) {
-                if (typeof carregarProgramaDFOperacaoParaPeriodo === "function") {
-                    await carregarProgramaDFOperacaoParaPeriodo(true);
+            mostrarModalCarregamentoOperacao("Consultando API SIAM...");
+            try {
+                const consultaInicialOk = await consultarAPI(true);
+                if (consultaInicialOk) {
+                    if (typeof carregarProgramaDFOperacaoParaPeriodo === "function") {
+                        atualizarTextoModalCarregamentoOperacao("Carregando Programa DF...");
+                        await carregarProgramaDFOperacaoParaPeriodo(true);
+                    }
+                    atualizarTextoModalCarregamentoOperacao("Montando tela de Operação...");
+                    abrirTela("operacao");
                 }
-                abrirTela("operacao");
+            } catch (erroInicial) {
+                console.error("Falha no carregamento inicial:", erroInicial);
+            } finally {
+                // Fecha somente após a tela de Operação ser desenhada.
+                requestAnimationFrame(() => requestAnimationFrame(fecharModalCarregamentoOperacao));
             }
             iniciarRelogioRegressivo();
         };
+
+        function mostrarModalCarregamentoOperacao(texto) {
+            const m = document.getElementById("modalCarregamentoOperacao");
+            if (!m) return;
+            atualizarTextoModalCarregamentoOperacao(texto || "");
+            m.classList.add("aberto");
+        }
+        function atualizarTextoModalCarregamentoOperacao(texto) {
+            const sub = document.getElementById("modalCarregamentoSub");
+            if (sub) sub.textContent = texto || "";
+        }
+        function fecharModalCarregamentoOperacao() {
+            const m = document.getElementById("modalCarregamentoOperacao");
+            if (m) m.classList.remove("aberto");
+        }
 
         function limparCacheLocalApontamentos() {
             try {
@@ -3033,7 +3077,7 @@ function prepararDados(dados) {
             return Array.isArray(retorno) ? (retorno[0] || null) : retorno;
         }
         async function prepararDadosAPartirDoCacheSupabase(mensagemOrigem){const cache=await carregarCacheApontamentosSupabase();if(!cache||cache.dados_json===undefined||cache.dados_json===null)throw new Error("Nenhum cache de apontamentos encontrado.");limparDadosDaTelaAntesDaConsulta();await carregarConfiguracoesGlobaisSupabase();apiAtualizada=true;ultimaAtualizacaoApi=cache.atualizado_em?new Date(cache.atualizado_em):new Date();prepararDados(cache.dados_json);const qtd=cache.qtd_registros??contarRegistrosCacheApontamentos(cache.dados_json);atualizarStatusApi(`${mensagemOrigem||"Cache carregado"}: ${qtd} registro(s), ${formatarDataHoraPorObjeto(ultimaAtualizacaoApi)}`,"sucesso");if(atualizacaoAutomaticaAtiva)reiniciarContadorAtualizacao();return cache;}
-        async function atualizarAutomaticamenteComFallback(){if(consultaEmAndamento)return;try{const periodoRapido=document.getElementById("periodoRapido");if(periodoRapido&&periodoRapido.value&&periodoRapido.value!=="manual"){aplicarPeriodoRapido(false,periodoRapido.value);}const atualizado=await consultarAPI(false);if(!atualizado&&typeof prepararDadosAPartirDoCacheSupabase==="function")await prepararDadosAPartirDoCacheSupabase("Atualização automática: usando último cache Supabase");}catch(e){console.error("Falha na atualização automática. Tentando cache Supabase:",e);try{if(typeof prepararDadosAPartirDoCacheSupabase==="function")await prepararDadosAPartirDoCacheSupabase("Atualização automática: usando último cache Supabase");}catch(ec){console.error("Falha também ao carregar cache na atualização automática:",ec);atualizarStatusApi("Falha na atualização automática e no cache","erro");}}finally{reiniciarContadorAtualizacao();}}
+        async function atualizarAutomaticamenteComFallback(){if(consultaEmAndamento)return;mostrarModalCarregamentoOperacao("Atualização automática: consultando API SIAM...");try{const periodoRapido=document.getElementById("periodoRapido");if(periodoRapido&&periodoRapido.value&&periodoRapido.value!=="manual"){aplicarPeriodoRapido(false,periodoRapido.value);}const atualizado=await consultarAPI(false);if(!atualizado&&typeof prepararDadosAPartirDoCacheSupabase==="function"){atualizarTextoModalCarregamentoOperacao("Usando último cache disponível...");await prepararDadosAPartirDoCacheSupabase("Atualização automática: usando último cache Supabase");}if(typeof carregarProgramaDFOperacaoParaPeriodo==="function"){atualizarTextoModalCarregamentoOperacao("Carregando Programa DF...");await carregarProgramaDFOperacaoParaPeriodo(false);}atualizarTextoModalCarregamentoOperacao("Montando tela de Operação...");}catch(e){console.error("Falha na atualização automática. Tentando cache Supabase:",e);try{if(typeof prepararDadosAPartirDoCacheSupabase==="function")await prepararDadosAPartirDoCacheSupabase("Atualização automática: usando último cache Supabase");}catch(ec){console.error("Falha também ao carregar cache na atualização automática:",ec);atualizarStatusApi("Falha na atualização automática e no cache","erro");}}finally{reiniciarContadorAtualizacao();requestAnimationFrame(()=>requestAnimationFrame(fecharModalCarregamentoOperacao));}}
         function definirStatusProgramaDF(texto,classe){const el=document.getElementById("programaDFStatus");if(el){el.textContent=texto;el.className="programa-df-status "+(classe||"");}}
         function atualizarProgressoProgramaDF(p){const box=document.getElementById("programaDFProgresso"),barra=document.getElementById("programaDFProgressoBarra");if(!box||!barra)return;const v=Math.max(0,Math.min(100,Number(p)||0));box.style.display=v>0?"block":"none";barra.style.width=v+"%";if(v>=100)setTimeout(()=>{box.style.display="none";barra.style.width="0%";},1500);}
         function normalizarCabecalhoProgramaDF(v){return String(v||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");}
