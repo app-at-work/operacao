@@ -1277,6 +1277,75 @@
         .modal-carregamento-barra::after{content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;border-radius:999px;background:var(--cor-principal);animation:barraCarregamento 1.2s ease-in-out infinite;}
         @keyframes girarCarregamento{to{transform:rotate(360deg);}}
         @keyframes barraCarregamento{0%{left:-40%;}100%{left:100%;}}
+
+        /* ===== Tela STOP (equipamentos que acabaram de entrar em HM) ===== */
+        #telaStop.ativa{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden;}
+        .stop-resumo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px;flex-shrink:0;}
+        .stop-kpi{background:var(--card);border:1px solid var(--borda);border-radius:var(--raio);box-shadow:var(--sombra);padding:12px 16px;display:flex;align-items:center;gap:12px;min-width:0;}
+        .stop-kpi-ico{width:40px;min-width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--cor-suave);color:var(--cor-principal);}
+        .stop-kpi-label{font-size:12px;font-weight:600;color:var(--texto-secundario);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .stop-kpi-valor{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;}
+        .stop-kpi.hmc .stop-kpi-ico{background:rgba(176,0,32,.12);color:#b00020;}
+        .stop-kpi.mps .stop-kpi-ico{background:rgba(37,99,235,.12);color:#2563eb;}
+        .stop-kpi.mpns .stop-kpi-ico{background:rgba(180,83,9,.14);color:#b45309;}
+        .stop-barra{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;flex-shrink:0;}
+        .stop-busca{position:relative;flex:1 1 240px;max-width:360px;}
+        .stop-busca input{width:100%;min-width:0;padding-left:36px;}
+        .stop-busca svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--texto-secundario);pointer-events:none;}
+        .stop-chips{display:flex;gap:6px;flex-wrap:wrap;}
+        .stop-chip{height:34px;min-height:34px;padding:0 12px;border-radius:999px;background:var(--card);color:var(--texto);border:1px solid var(--borda);font-size:12.5px;font-weight:600;}
+        .stop-chip:hover{background:var(--cor-suave);color:var(--texto);}
+        .stop-chip.ativo{background:var(--cor-principal);border-color:var(--cor-principal);color:#fff;}
+        .stop-info{font-size:12px;color:var(--texto-secundario);margin-left:auto;}
+        .stop-quadros{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+        .stop-quadro{background:var(--fundo);border:1px solid var(--borda);border-radius:14px;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+        .stop-quadro-topo{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;color:#fff;flex-shrink:0;}
+        .stop-quadro.hmc .stop-quadro-topo{background:linear-gradient(135deg,#b00020,#8a0019);}
+        .stop-quadro.mps .stop-quadro-topo{background:linear-gradient(135deg,#2563eb,#1d4ed8);}
+        .stop-quadro.mpns .stop-quadro-topo{background:linear-gradient(135deg,#d97706,#b45309);}
+        .stop-quadro-titulo{display:flex;flex-direction:column;line-height:1.15;min-width:0;}
+        .stop-quadro-titulo strong{font-size:14px;}
+        .stop-quadro-titulo span{font-size:11.5px;opacity:.85;}
+        .stop-quadro-contador{min-width:34px;height:28px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.22);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+        .stop-quadro-lista{flex:1;min-height:0;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px;}
+        .stop-card{background:var(--card);border:1px solid var(--borda);border-left:4px solid var(--cor-principal);border-radius:12px;box-shadow:var(--sombra);padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+        .stop-quadro.hmc .stop-card{border-left-color:#b00020;}
+        .stop-quadro.mps .stop-card{border-left-color:#2563eb;}
+        .stop-quadro.mpns .stop-card{border-left-color:#d97706;}
+        .stop-card-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+        .stop-card-equip{font-size:16px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .stop-card-btn{width:30px;min-width:30px;height:30px;min-height:30px;padding:0;border-radius:999px;background:#fff;color:var(--cor-principal);border:1px solid var(--borda);}
+        .stop-card-btn:hover{background:var(--cor-suave);color:var(--cor-principal);border-color:var(--cor-principal);}
+        .stop-card-chips{display:flex;flex-wrap:wrap;gap:4px;}
+        .stop-card-linhas{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+        .stop-card-linha{background:var(--fundo);border:1px solid var(--borda);border-radius:8px;padding:5px 8px;min-width:0;}
+        .stop-card-linha small{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--texto-secundario);}
+        .stop-card-linha b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .stop-card-transicao{display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap;}
+        .stop-card-transicao svg{color:var(--texto-secundario);}
+        .stop-card.alternancia{border-color:rgba(124,58,237,.45);box-shadow:0 0 0 3px rgba(124,58,237,.12),var(--sombra);}
+        .stop-alerta-alternancia{display:flex;align-items:flex-start;gap:8px;background:rgba(124,58,237,.10);border:1px solid rgba(124,58,237,.35);color:#6d28d9;border-radius:8px;padding:6px 8px;animation:pulsarAlternanciaStop 1.6s ease-in-out infinite;}
+        .stop-alerta-alternancia svg{flex-shrink:0;margin-top:1px;}
+        .stop-alerta-alternancia strong{display:block;font-size:12px;}
+        .stop-alerta-alternancia span{display:block;font-size:11px;opacity:.9;}
+        body.tema-escuro .stop-alerta-alternancia{color:#c4b5fd;}
+        @keyframes pulsarAlternanciaStop{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.35);}50%{box-shadow:0 0 0 5px rgba(124,58,237,0);}}
+        .stop-card-razao{font-size:12px;color:var(--texto-secundario);line-height:1.35;border-top:1px dashed var(--borda);padding-top:6px;}
+        .stop-vazio{font-size:12.5px;color:var(--texto-secundario);text-align:center;padding:18px 10px;border:1px dashed var(--borda);border-radius:10px;background:var(--card);}
+        html.disp-tablet .stop-resumo{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+        html.disp-tablet.orient-retrato .stop-quadros{grid-template-columns:1fr;grid-auto-rows:minmax(260px,auto);overflow-y:auto;}
+        html.disp-tablet.orient-retrato .stop-quadro{max-height:60vh;}
+        html.disp-celular #telaStop.ativa{overflow:visible;}
+        html.disp-celular .stop-resumo{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+        html.disp-celular .stop-kpi{padding:10px 12px;}
+        html.disp-celular .stop-kpi-ico{width:34px;min-width:34px;height:34px;}
+        html.disp-celular .stop-kpi-valor{font-size:22px;}
+        html.disp-celular .stop-busca{max-width:none;flex-basis:100%;}
+        html.disp-celular .stop-info{margin-left:0;width:100%;}
+        html.disp-celular .stop-quadros{grid-template-columns:1fr;flex:none;}
+        html.disp-celular .stop-quadro{overflow:visible;}
+        html.disp-celular .stop-quadro-lista{overflow:visible;}
+        html.disp-celular .stop-chip{min-height:34px;}
 </style>
 </head>
 
@@ -1300,6 +1369,7 @@
                 <div class="menu-grupo menu-label">Monitoramento</div>
                 <button class="menu-item" id="btnTelaOperacao" onclick="abrirTela('operacao')" data-tip="Operação"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><span class="menu-label">Operação</span></button>
                 <button class="menu-item ativo" id="btnTelaConsulta" onclick="abrirTela('consulta')" data-tip="Consulta"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="menu-label">Consulta</span></button>
+                <button class="menu-item" id="btnTelaStop" onclick="abrirTela('stop')" data-tip="STOP"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 2h7.6L22 8.2v7.6L15.8 22H8.2L2 15.8V8.2z"/><path d="M9 9h6v6H9z"/></svg><span class="menu-label">STOP</span></button>
                 <button class="menu-item" id="btnTelaTabelas" onclick="abrirTela('tabelas')" data-tip="Tabelas"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><span class="menu-label">Tabelas</span></button>
                 <button class="menu-item" id="btnTelaDashboard" onclick="abrirTela('dashboard')">Dashboard</button>
                 <div class="menu-grupo menu-label">Configurações</div>
@@ -1657,6 +1727,24 @@
                 <div id="cardsOperacao" class="lista-cards-operacao"></div>
             </section>
 
+            <section id="telaStop" class="tela">
+                <div class="stop-resumo">
+                    <div class="stop-kpi"><div class="stop-kpi-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.2 2h7.6L22 8.2v7.6L15.8 22H8.2L2 15.8V8.2z"/><path d="M12 8v4M12 16h.01"/></svg></div><div><div class="stop-kpi-label">Entradas em HM</div><div class="stop-kpi-valor" id="stopTotal">0</div></div></div>
+                    <div class="stop-kpi hmc"><div class="stop-kpi-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div><div><div class="stop-kpi-label">HMC - Corretiva</div><div class="stop-kpi-valor" id="stopTotalHMC">0</div></div></div>
+                    <div class="stop-kpi mps"><div class="stop-kpi-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M9 15l2 2 4-4"/></svg></div><div><div class="stop-kpi-label">MPS - Sistemática</div><div class="stop-kpi-valor" id="stopTotalMPS">0</div></div></div>
+                    <div class="stop-kpi mpns"><div class="stop-kpi-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><div class="stop-kpi-label">MPNS - Não Sistemática</div><div class="stop-kpi-valor" id="stopTotalMPNS">0</div></div></div>
+                </div>
+                <div class="stop-barra">
+                    <div class="stop-busca"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" id="stopBusca" placeholder="Buscar equipamento, frota ou modelo..." oninput="renderizarTelaStop()"></div>
+                    <div class="stop-chips" id="stopChipsMina"></div>
+                    <div class="stop-info" id="stopInfo">Critério: último lançamento HM e lançamento anterior diferente de HM.</div>
+                </div>
+                <div class="stop-quadros">
+                    <section class="stop-quadro hmc"><div class="stop-quadro-topo"><div class="stop-quadro-titulo"><strong>HMC</strong><span>Corretiva</span></div><span class="stop-quadro-contador" id="stopContHMC">0</span></div><div class="stop-quadro-lista" id="stopListaHMC"></div></section>
+                    <section class="stop-quadro mps"><div class="stop-quadro-topo"><div class="stop-quadro-titulo"><strong>MPS</strong><span>Manutenção Sistemática</span></div><span class="stop-quadro-contador" id="stopContMPS">0</span></div><div class="stop-quadro-lista" id="stopListaMPS"></div></section>
+                    <section class="stop-quadro mpns"><div class="stop-quadro-topo"><div class="stop-quadro-titulo"><strong>MPNS</strong><span>Manutenção Não Sistemática</span></div><span class="stop-quadro-contador" id="stopContMPNS">0</span></div><div class="stop-quadro-lista" id="stopListaMPNS"></div></section>
+                </div>
+            </section>
             <section id="telaControleEquipamentos" class="tela">
                 <div class="controle-equipamentos-scroll">
                     <div class="card controle-equipamentos-card">
@@ -1991,6 +2079,8 @@ let segundosRestantes = TEMPO_ATUALIZACAO_SEGUNDOS;
             document.getElementById("telaConfigVisual").classList.remove("ativa");
             document.getElementById("telaControleEquipamentos").classList.remove("ativa");
             document.getElementById("telaProgramaDF").classList.remove("ativa");
+            document.getElementById("telaStop").classList.remove("ativa");
+            document.getElementById("btnTelaStop").classList.remove("ativo");
 
             document.getElementById("btnTelaConsulta").classList.remove("ativo");
             document.getElementById("btnTelaTabelas").classList.remove("ativo");
@@ -2034,6 +2124,12 @@ let segundosRestantes = TEMPO_ATUALIZACAO_SEGUNDOS;
                 document.getElementById("btnTelaProgramaDF").classList.add("ativo");
                 document.getElementById("tituloTela").textContent = "Programa DF";
                 consultarProgramaDFSupabase(false);
+            }
+            if (nomeTela === "stop") {
+                document.getElementById("telaStop").classList.add("ativa");
+                document.getElementById("btnTelaStop").classList.add("ativo");
+                document.getElementById("tituloTela").textContent = "STOP";
+                atualizarTelaStop();
             }
             if (nomeTela === "operacao") {
                 document.getElementById("telaOperacao").classList.add("ativa");
@@ -2264,6 +2360,7 @@ let segundosRestantes = TEMPO_ATUALIZACAO_SEGUNDOS;
 
             limparOpcoesMultiFiltros(false);
             limparOperacao(false);
+            if (typeof atualizarTelaStop === "function") atualizarTelaStop();
             atualizarResumoConsulta();
             if (typeof atualizarDashboard === "function") atualizarDashboard();
         }
@@ -2297,6 +2394,7 @@ function prepararDados(dados) {
             renderizarTodosMultiFiltros();
             aplicarFiltrosTabela();
             prepararOperacao();
+            if (typeof atualizarTelaStop === "function") atualizarTelaStop();
             mostrarInfoColunas();
             atualizarResumoConsulta();
 
@@ -3882,6 +3980,133 @@ function prepararDados(dados) {
         })();
 
     
+
+        /* ===================== TELA STOP =====================
+           Equipamentos que ACABARAM de entrar em manutenção:
+           - último lançamento com Categoria Tipo = HM
+           - lançamento imediatamente anterior com Categoria Tipo diferente de HM
+           Separados por Categoria Tempo: HMC (Corretiva), MPS (Sistemática), MPNS (Não Sistemática). */
+        let dadosTelaStop = [];
+        let minaSelecionadaStop = "__TODAS__";
+        const QUADROS_STOP = [
+            { codigo: "HMC", lista: "stopListaHMC", contador: "stopContHMC", kpi: "stopTotalHMC" },
+            { codigo: "MPS", lista: "stopListaMPS", contador: "stopContMPS", kpi: "stopTotalMPS" },
+            { codigo: "MPNS", lista: "stopListaMPNS", contador: "stopContMPNS", kpi: "stopTotalMPNS" }
+        ];
+        function obterDataInicialMsStop(item) {
+            const v = colunaDataInicial ? new Date(item[colunaDataInicial]).getTime() : NaN;
+            return isNaN(v) ? obterDataReferenciaLancamento(item) : v;
+        }
+        function obterDataFinalMsStop(item) {
+            const v = colunaDataFinal ? new Date(item[colunaDataFinal]).getTime() : NaN;
+            return isNaN(v) ? obterDataReferenciaLancamento(item) : v;
+        }
+        function classificarCategoriaTempoStop(valor) {
+            const t = normalizarTexto(valor).toUpperCase().replace(/\s+/g, "");
+            if (!t) return "";
+            if (t === "MPNS" || t.includes("MPNS") || t.includes("NAOSISTEMATICA")) return "MPNS";
+            if (t === "MPS" || t.includes("MPS") || t.includes("SISTEMATICA")) return "MPS";
+            if (t === "HMC" || t.includes("HMC") || t.includes("CORRETIVA")) return "HMC";
+            return "";
+        }
+        function calcularEntradasStop() {
+            if (!apiAtualizada || !Array.isArray(dadosOriginais) || !dadosOriginais.length || !colunaEquipamento || !colunaCategoriaTipo) return [];
+            const porEquip = new Map();
+            dadosOriginais.forEach(item => {
+                const eq = String(item[colunaEquipamento] ?? "").trim();
+                if (!eq) return;
+                if (String(item[COLUNA_REL_MINA] ?? "").trim() === "") return; // mesmo critério da Operação: sem mina não aparece
+                if (!porEquip.has(eq)) porEquip.set(eq, []);
+                porEquip.get(eq).push(item);
+            });
+            const resultado = [];
+            porEquip.forEach((regs, eq) => {
+                if (regs.length < 2) return; // precisa de um lançamento anterior para confirmar a entrada
+                regs.sort((a, b) => (obterDataInicialMsStop(a) - obterDataInicialMsStop(b)) || (obterDataFinalMsStop(a) - obterDataFinalMsStop(b)));
+                const ultimo = regs[regs.length - 1], anterior = regs[regs.length - 2];
+                const stUlt = obterStatusOperacao(ultimo[colunaCategoriaTipo]);
+                const stAnt = obterStatusOperacao(anterior[colunaCategoriaTipo]);
+                if (stUlt.codigo !== "HM") return;
+                const tempoUlt = colunaCategoriaTempo ? ultimo[colunaCategoriaTempo] : "";
+                const quadro = classificarCategoriaTempoStop(tempoUlt);
+                if (!quadro) return;
+                // Alternância: anterior também HM, mas em outra Categoria Tempo (HMC / MPS / MPNS)
+                let alternancia = false;
+                if (stAnt.codigo === "HM") {
+                    const quadroAnt = classificarCategoriaTempoStop(colunaCategoriaTempo ? anterior[colunaCategoriaTempo] : "");
+                    if (!quadroAnt || quadroAnt === quadro) return; // permanece na mesma categoria: não aparece
+                    alternancia = true;
+                }
+                // Início do bloco contínuo em HM e sequência de categorias percorridas
+                let iniBloco = regs.length - 1;
+                while (iniBloco > 0 && obterStatusOperacao(regs[iniBloco - 1][colunaCategoriaTipo]).codigo === "HM") iniBloco--;
+                const sequenciaHM = [];
+                for (let k = iniBloco; k < regs.length; k++) { const q = classificarCategoriaTempoStop(colunaCategoriaTempo ? regs[k][colunaCategoriaTempo] : "") || String(regs[k][colunaCategoriaTempo] ?? "").trim() || "-"; if (sequenciaHM[sequenciaHM.length - 1] !== q) sequenciaHM.push(q); }
+                const primeiroHM = regs[iniBloco];
+                resultado.push({
+                    equipamento: eq,
+                    quadro: quadro,
+                    categoriaTempo: String(tempoUlt ?? "").trim(),
+                    mina: obterValorRelacaoOperacao(ultimo, COLUNA_REL_MINA, "Sem mina"),
+                    frota: obterValorRelacaoOperacao(ultimo, COLUNA_REL_FROTA, "Sem frota"),
+                    modelo: obterValorRelacaoOperacao(ultimo, COLUNA_REL_MODELO, "Sem modelo"),
+                    entrada: colunaDataInicial ? formatarValorTabela(colunaDataInicial, ultimo[colunaDataInicial], ultimo) : "",
+                    entradaMs: obterDataInicialMsStop(ultimo),
+                    tempoEmHM: calcularDuracaoEntreDatas(ultimo) || "-",
+                    anteriorStatus: stAnt,
+                    anteriorTempo: colunaCategoriaTempo ? String(anterior[colunaCategoriaTempo] ?? "").trim() : "",
+                    alternancia: alternancia,
+                    sequenciaHM: sequenciaHM,
+                    emHMDesde: colunaDataInicial ? formatarValorTabela(colunaDataInicial, primeiroHM[colunaDataInicial], primeiroHM) : "",
+                    razao: (() => { const c = obterColunaRazaoDescricao(); return c ? String(ultimo[c] ?? "").trim() : ""; })()
+                });
+            });
+            return resultado.sort((a, b) => b.entradaMs - a.entradaMs);
+        }
+        function atualizarTelaStop() {
+            dadosTelaStop = calcularEntradasStop();
+            renderizarTelaStop();
+        }
+        function selecionarMinaStop(mina) { minaSelecionadaStop = mina; renderizarTelaStop(); }
+        function renderizarChipsMinaStop() {
+            const div = document.getElementById("stopChipsMina"); if (!div) return;
+            const minas = [...new Set(dadosTelaStop.map(i => i.mina))].sort((a, b) => a.localeCompare(b, "pt-BR", { numeric: true }));
+            if (minaSelecionadaStop !== "__TODAS__" && !minas.includes(minaSelecionadaStop)) minaSelecionadaStop = "__TODAS__";
+            const chip = (valor, rotulo, qtd) => `<button type="button" class="stop-chip${minaSelecionadaStop === valor ? " ativo" : ""}" onclick="selecionarMinaStop('${escaparAtributoJs(valor)}')">${escaparHtml(rotulo)} (${qtd})</button>`;
+            div.innerHTML = chip("__TODAS__", "Todas", dadosTelaStop.length) + minas.map(m => chip(m, m, dadosTelaStop.filter(i => i.mina === m).length)).join("");
+        }
+        function montarCardStop(item) {
+            const ant = item.anteriorStatus || {};
+            const antTexto = (ant.codigo || "-") + (item.anteriorTempo ? " · " + item.anteriorTempo : "");
+            const alerta = item.alternancia ? `<div class="stop-alerta-alternancia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><div><strong>Alternância entre Categorias de Tempo</strong><span>${escaparHtml(item.sequenciaHM.join(" → "))} · em HM desde ${escaparHtml(item.emHMDesde || "-")}</span></div></div>` : "";
+            return `<article class="stop-card${item.alternancia ? " alternancia" : ""}">${alerta}
+                <div class="stop-card-topo"><div class="stop-card-equip" title="${escaparHtml(item.equipamento)}">${escaparHtml(item.equipamento)}</div>
+                <button class="stop-card-btn" title="Ver apontamentos" onclick="abrirModalApontamentosEquipamento('${escaparAtributoJs(item.equipamento)}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div>
+                <div class="stop-card-chips"><span class="meta-relacao-chip">Mina: ${escaparHtml(item.mina)}</span><span class="meta-relacao-chip">Frota: ${escaparHtml(item.frota)}</span><span class="meta-relacao-chip">Modelo: ${escaparHtml(item.modelo)}</span></div>
+                <div class="stop-card-transicao"><span class="status-texto-card ${escaparHtml(ant.classe || "status-indefinido")}">${escaparHtml(antTexto)}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="status-texto-card status-hm">HM · ${escaparHtml(item.categoriaTempo || item.quadro)}</span></div>
+                <div class="stop-card-linhas"><div class="stop-card-linha"><small>${item.alternancia ? "Entrada na categoria" : "Entrada"}</small><b>${escaparHtml(item.entrada || "-")}</b></div><div class="stop-card-linha"><small>${item.alternancia ? "Tempo na categoria" : "Tempo em HM"}</small><b>${escaparHtml(item.tempoEmHM)}</b></div></div>
+                ${item.razao ? `<div class="stop-card-razao">${escaparHtml(item.razao)}</div>` : ""}
+            </article>`;
+        }
+        function renderizarTelaStop() {
+            if (!document.getElementById("telaStop")) return;
+            renderizarChipsMinaStop();
+            const busca = normalizarTexto((document.getElementById("stopBusca") || {}).value || "");
+            let lista = dadosTelaStop;
+            if (minaSelecionadaStop !== "__TODAS__") lista = lista.filter(i => i.mina === minaSelecionadaStop);
+            if (busca) lista = lista.filter(i => normalizarTexto([i.equipamento, i.frota, i.modelo, i.mina].join(" ")).includes(busca));
+            document.getElementById("stopTotal").textContent = lista.length;
+            QUADROS_STOP.forEach(q => {
+                const itens = lista.filter(i => i.quadro === q.codigo);
+                document.getElementById(q.kpi).textContent = itens.length;
+                document.getElementById(q.contador).textContent = itens.length;
+                const el = document.getElementById(q.lista);
+                el.innerHTML = itens.length ? itens.map(montarCardStop).join("") : `<div class="stop-vazio">${apiAtualizada ? "Nenhum equipamento entrou em " + q.codigo + "." : "Aguardando atualização da API."}</div>`;
+            });
+            const info = document.getElementById("stopInfo");
+            const qtdAlt = lista.filter(i => i.alternancia).length;
+            if (info) info.textContent = "Entradas em HM e alternâncias HMC/MPS/MPNS" + (qtdAlt ? " · " + qtdAlt + " alternância(s)" : "") + (ultimaAtualizacaoApi ? " · Atualizado " + formatarDataHoraPorObjeto(ultimaAtualizacaoApi) : "");
+        }
         window.aoMudarDispositivo=function(agora){if(agora==="computador")fecharMenuMobile();document.querySelectorAll(".ms-select.aberto").forEach(x=>x.classList.remove("aberto"));};
     </script>
 
