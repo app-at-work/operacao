@@ -1331,6 +1331,16 @@
         body.tema-escuro .stop-alerta-alternancia{color:#c4b5fd;}
         @keyframes pulsarAlternanciaStop{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.35);}50%{box-shadow:0 0 0 5px rgba(124,58,237,0);}}
         .stop-card-razao{font-size:12px;color:var(--texto-secundario);line-height:1.35;border-top:1px dashed var(--borda);padding-top:6px;}
+        /* ===== Card clicável (expande/recolhe no modo recolhido) ===== */
+        .card-operacao-item.card-clicavel-operacao{cursor:pointer;user-select:none;transition:transform .12s ease,box-shadow .15s ease;}
+        .card-operacao-item.card-clicavel-operacao:hover{transform:translateY(-1px);}
+        .card-operacao-item.card-clicavel-operacao:active{transform:scale(.98);}
+        .card-operacao-item.card-clicavel-operacao .acao-tabela-icone{cursor:pointer;}
+        /* ===== Bolha de eventos HM nos cards da Operação ===== */
+        .card-operacao-titulo{display:flex;align-items:center;gap:6px;min-width:0;}
+        .bolha-eventos-hm{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#b00020;color:#fff;font-size:11px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px var(--card),0 2px 6px rgba(176,0,32,.35);cursor:help;}
+        .card-operacao-item.modo-recolhido .bolha-eventos-hm{min-width:16px;height:16px;padding:0 4px;font-size:10px;}
+        body.tema-escuro .bolha-eventos-hm{background:#dc2626;}
         .stop-vazio{font-size:12.5px;color:var(--texto-secundario);text-align:center;padding:18px 10px;border:1px dashed var(--borda);border-radius:10px;background:var(--card);}
         html.disp-tablet .stop-resumo{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
         html.disp-tablet.orient-retrato .stop-quadros{grid-template-columns:1fr;grid-auto-rows:minmax(260px,auto);overflow-y:auto;}
@@ -2913,13 +2923,13 @@ function prepararDados(dados) {
             aplicarFiltrosOperacao();
         }
         function obterUltimoLancamentoPorEquipamento(listaBase) {
-            const mapa = new Map(); const dadosBase = Array.isArray(listaBase) ? listaBase : dadosOriginais; const temposPorEquipamento = calcularTemposCategoriaPorEquipamento(dadosBase);
+            const mapa = new Map(); const dadosBase = Array.isArray(listaBase) ? listaBase : dadosOriginais; const temposPorEquipamento = calcularTemposCategoriaPorEquipamento(dadosBase); const eventosHMPorEquipamento = calcularEventosHMPorEquipamento(dadosBase);
             dadosBase.forEach(item => {
                 const equipamento = item[colunaEquipamento]; if (equipamento === null || equipamento === undefined || String(equipamento).trim() === "") return;
                 const chave = String(equipamento).trim(); const dataReferencia = obterDataReferenciaLancamento(item); const atual = mapa.get(chave);
                 if (!atual || dataReferencia >= atual.dataReferencia) {
                     const valorCategoriaTipo = colunaCategoriaTipo ? item[colunaCategoriaTipo] : ""; const valorCategoriaTempo = colunaCategoriaTempo ? item[colunaCategoriaTempo] : ""; const status = obterStatusOperacao(valorCategoriaTipo); const categoriaTempoNormalizada = normalizarTexto(valorCategoriaTempo).toUpperCase();
-                    mapa.set(chave, { equipamento: chave, categoriaTipo: valorCategoriaTipo, categoriaTempo: valorCategoriaTempo, status: status, dataInicial: colunaDataInicial ? item[colunaDataInicial] : "", dataFinal: colunaDataFinal ? item[colunaDataFinal] : "", duracao: calcularDuracaoEntreDatas(item), temposCategoria: temposPorEquipamento.get(chave) || [], alertaHmHmc: status.codigo === "HM" && categoriaTempoNormalizada === "HMC", alertaHmMps: status.codigo === "HM" && categoriaTempoNormalizada === "MPS", dataReferencia: dataReferencia, registroOriginal: item });
+                    mapa.set(chave, { equipamento: chave, categoriaTipo: valorCategoriaTipo, categoriaTempo: valorCategoriaTempo, status: status, dataInicial: colunaDataInicial ? item[colunaDataInicial] : "", dataFinal: colunaDataFinal ? item[colunaDataFinal] : "", duracao: calcularDuracaoEntreDatas(item), temposCategoria: temposPorEquipamento.get(chave) || [], eventosHM: eventosHMPorEquipamento.get(chave) || { quantidade: 0, sequencia: [] }, alertaHmHmc: status.codigo === "HM" && categoriaTempoNormalizada === "HMC", alertaHmMps: status.codigo === "HM" && categoriaTempoNormalizada === "MPS", dataReferencia: dataReferencia, registroOriginal: item });
                 }
             });
             return Array.from(mapa.values()).sort((a, b) => a.equipamento.localeCompare(b.equipamento, "pt-BR", { numeric: true }));
@@ -2928,6 +2938,42 @@ function prepararDados(dados) {
             const mapa = new Map(); if (!colunaEquipamento || !colunaCategoriaTipo) return mapa;
             listaBase.forEach(item => { const equipamento = item[colunaEquipamento]; if (equipamento === null || equipamento === undefined || String(equipamento).trim() === "") return; const chaveEquipamento = String(equipamento).trim(); const status = obterStatusOperacao(item[colunaCategoriaTipo]); const chaveCategoria = status.codigo || "-"; const duracaoMs = obterDuracaoMsEntreDatas(item); if (!mapa.has(chaveEquipamento)) mapa.set(chaveEquipamento, new Map()); const mapaCategoria = mapa.get(chaveEquipamento); const atual = mapaCategoria.get(chaveCategoria) || { codigo: status.codigo, texto: status.texto, descricao: status.descricao, classe: status.classe, icone: status.icone, duracaoMs: 0 }; atual.duracaoMs += duracaoMs; mapaCategoria.set(chaveCategoria, atual); });
             const resultado = new Map(); mapa.forEach((categorias, equipamento) => { const listaCategorias = Array.from(categorias.values()).sort((a,b)=>ordenarCategoriaOperacao(a.codigo)-ordenarCategoriaOperacao(b.codigo)).map(item => ({ codigo:item.codigo, texto:item.texto, descricao:item.descricao, classe:item.classe, icone:item.icone, tempo:formatarDuracaoMs(item.duracaoMs), duracaoMs:item.duracaoMs })); resultado.set(equipamento, listaCategorias); }); return resultado;
+        }
+        /* ===== Eventos HM por equipamento =====
+           Evento = bloco de lançamentos consecutivos (ordenados por Início/Fim) com Categoria Tipo = HM
+           e mesma Categoria Tempo, em que o Início de um lançamento dá sequência ao Fim do anterior. */
+        const TOLERANCIA_SEQUENCIA_EVENTO_HM_MS = 60000; // 1 min de tolerância entre Fim e Início
+        function calcularEventosHMPorEquipamento(listaBase) {
+            const resultado = new Map(); if (!colunaEquipamento || !colunaCategoriaTipo) return resultado;
+            const porEquip = new Map();
+            (Array.isArray(listaBase) ? listaBase : []).forEach(item => { const eq = String(item[colunaEquipamento] ?? "").trim(); if (!eq) return; if (!porEquip.has(eq)) porEquip.set(eq, []); porEquip.get(eq).push(item); });
+            porEquip.forEach((regs, eq) => {
+                const ordenados = [...regs].sort((a, b) => (obterDataInicialMsStop(a) - obterDataInicialMsStop(b)) || (obterDataFinalMsStop(a) - obterDataFinalMsStop(b)));
+                const eventos = []; let atual = null;
+                ordenados.forEach(r => {
+                    if (obterStatusOperacao(r[colunaCategoriaTipo]).codigo !== "HM") { atual = null; return; }
+                    const tempoOriginal = colunaCategoriaTempo ? String(r[colunaCategoriaTempo] ?? "").trim() : "";
+                    const tempo = normalizarTexto(tempoOriginal).toUpperCase();
+                    const ini = obterDataInicialMsStop(r), fim = obterDataFinalMsStop(r);
+                    const continua = atual && atual.tempo === tempo && (ini - atual.fimMs) <= TOLERANCIA_SEQUENCIA_EVENTO_HM_MS;
+                    if (continua) { atual.fimMs = Math.max(atual.fimMs, fim); }
+                    else { atual = { tempo, tempoOriginal: tempoOriginal || "-", inicioMs: ini, fimMs: fim }; eventos.push(atual); }
+                });
+                resultado.set(eq, { quantidade: eventos.length, sequencia: eventos.map(e => e.tempoOriginal) });
+            });
+            return resultado;
+        }
+        function deveExibirBolhaEventosHM(item) {
+            const n = item && item.eventosHM ? item.eventosHM.quantidade : 0;
+            if (n <= 0) return false;                                   // sem eventos: não aparece
+            if (item.status && item.status.codigo === "HM") return n > 1; // em HM e 1º evento: não aparece
+            return true;                                                // há eventos: aparece
+        }
+        function montarBolhaEventosHM(item) {
+            if (!deveExibirBolhaEventosHM(item)) return "";
+            const n = item.eventosHM.quantidade;
+            const titulo = n + " evento(s) de HM no período: " + item.eventosHM.sequencia.join(" → ");
+            return `<span class="bolha-eventos-hm" title="${escaparHtml(titulo)}" aria-label="${escaparHtml(titulo)}">${n}</span>`;
         }
         function ordenarCategoriaOperacao(codigo) { const ordem = { HT: 1, HO: 2, HM: 3 }; return ordem[codigo] || 99; }
         function obterDuracaoMsEntreDatas(item) { if (!colunaDataInicial || !colunaDataFinal) return 0; const dataInicial = new Date(item[colunaDataInicial]); const dataFinal = new Date(item[colunaDataFinal]); if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) return 0; const diferenca = dataFinal.getTime() - dataInicial.getTime(); return diferenca > 0 ? diferenca : 0; }
@@ -3216,7 +3262,7 @@ function prepararDados(dados) {
         function montarBadgeRecuperacaoOperacao(a,b,cls,label){if(a===null||a===undefined||!isFinite(a)||b===null||b===undefined||!isFinite(b))return `<span class="${cls}">${label?label+': ':''}-</span>`;const d=a-b;if(d>0.004)return `<span class="${cls} subindo">${label?label+': ':''}↑ +${d.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})} p.p.</span>`;if(d<-0.004)return `<span class="${cls} descendo">${label?label+': ':''}↓ ${d.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})} p.p.</span>`;return `<span class="${cls}">${label?label+': ':''}→ 0,00 p.p.</span>`;}
         function montarChipRecuperacaoOperacao(item,df){return montarBadgeRecuperacaoOperacao(df,calcularDFAnteriorEquipamentoOperacao(item),"meta-relacao-chip recuperacao-card-chip","Recuperação");}
         function montarCabecalhoGrupoOperacao(tipo,nome,itens){const df=calcularDFGrupoItensOperacao(itens),ant=calcularDFAnteriorGrupoOperacao(itens),prog=calcularProgramaMedioGrupoOperacao(itens),classe=prog!==null&&df!==null&&isFinite(df)?(df>=prog?"ok":"nok"):"";return `<div class="cabecalho-grupo-operacao"><span class="grupo-nome-operacao">${tipo}: ${escaparHtml(nome)}</span><span class="grupo-info-operacao"><span class="grupo-df-operacao ${classe}">DF ${formatarPercentualDF(df)}</span><span class="grupo-programa-df-operacao">Prog. DF ${formatarProgramaDFCard(prog)}</span>${montarBadgeRecuperacaoOperacao(df,ant,"grupo-recuperacao-operacao","")}</span></div>`;}
-        function montarHtmlCardOperacaoCompleto(item,modelo,dfTexto,botaoRecolherHtml,dfValor){const equipamentoSeguro=escaparHtml(item.equipamento),statusTexto=escaparHtml(item.status.texto||item.status.descricao||item.status.codigo),linhasTempo=montarLinhasTempoCategoria(item.temposCategoria),botaoRecolher=botaoRecolherHtml||"",programa=obterProgramaDFOperacaoParaItem(item),classeDF=obterClasseDFCard(dfValor,programa),chipProgramaDF=montarChipProgramaDFOperacao(programa),chipRecuperacao=montarChipRecuperacaoOperacao(item,dfValor);return `<div class="card-operacao-topo"><div class="card-operacao-equipamento">${equipamentoSeguro}</div><div class="acoes-card-operacao">${botaoRecolher}<button class="acao-tabela-icone" title="Ver apontamentos" onclick="irParaTabelaEquipamento('${escaparAtributoJs(item.equipamento)}')"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div></div><div class="linha-status-operacao"><div class="status-atual-card"><span>Status:</span><span class="status-texto-card ${item.status.classe}">${statusTexto}</span></div></div><div class="meta-relacao-card"><span class="meta-relacao-chip">Modelo: ${escaparHtml(modelo)}</span><span class="meta-relacao-chip df-card-chip ${classeDF}">DF: ${escaparHtml(dfTexto)}</span>${chipProgramaDF}${chipRecuperacao}</div><div class="tempos-categoria">${linhasTempo}</div>`;}
+        function montarHtmlCardOperacaoCompleto(item,modelo,dfTexto,botaoRecolherHtml,dfValor){const equipamentoSeguro=escaparHtml(item.equipamento),statusTexto=escaparHtml(item.status.texto||item.status.descricao||item.status.codigo),linhasTempo=montarLinhasTempoCategoria(item.temposCategoria),botaoRecolher=botaoRecolherHtml||"",programa=obterProgramaDFOperacaoParaItem(item),classeDF=obterClasseDFCard(dfValor,programa),chipProgramaDF=montarChipProgramaDFOperacao(programa),chipRecuperacao=montarChipRecuperacaoOperacao(item,dfValor);return `<div class="card-operacao-topo"><div class="card-operacao-titulo"><div class="card-operacao-equipamento">${equipamentoSeguro}</div>${montarBolhaEventosHM(item)}</div><div class="acoes-card-operacao">${botaoRecolher}<button class="acao-tabela-icone" title="Ver apontamentos" onclick="irParaTabelaEquipamento('${escaparAtributoJs(item.equipamento)}')"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div></div><div class="linha-status-operacao"><div class="status-atual-card"><span>Status:</span><span class="status-texto-card ${item.status.classe}">${statusTexto}</span></div></div><div class="meta-relacao-card"><span class="meta-relacao-chip">Modelo: ${escaparHtml(modelo)}</span><span class="meta-relacao-chip df-card-chip ${classeDF}">DF: ${escaparHtml(dfTexto)}</span>${chipProgramaDF}${chipRecuperacao}</div><div class="tempos-categoria">${linhasTempo}</div>`;}
         
         function montarCardsOperacao(lista) {
             atualizarBotaoModoVisualizacaoCardsOperacao();
@@ -3275,8 +3321,13 @@ function prepararDados(dados) {
                         const equipamentoAtributo = escaparAtributoJs(item.equipamento);
                         const cardEstaExpandido = modoVisualizacaoCardsOperacao === "recolhido" && cardsOperacaoExpandidos.has(String(item.equipamento ?? "").trim());
                         aplicarConfiguracaoVisualCard(card, item);
-                        if (modoVisualizacaoCardsOperacao === "recolhido" && !cardEstaExpandido) { card.classList.add("modo-recolhido"); card.innerHTML = `<div class="card-operacao-topo"><div class="card-operacao-equipamento" title="${equipamentoSeguro}">${equipamentoSeguro}</div><button class="btn-expandir-card-operacao" title="Expandir card completo" onclick="alternarExpansaoCardOperacao('${equipamentoAtributo}')"><svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>`; }
-                        else { if (cardEstaExpandido) card.classList.add("card-expandido-operacao"); const botaoRecolherHtml = cardEstaExpandido ? `<button class="btn-expandir-card-operacao" title="Recolher card" onclick="alternarExpansaoCardOperacao('${equipamentoAtributo}')"><svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>` : ""; card.innerHTML = montarHtmlCardOperacaoCompleto(item, modelo, dfTexto, botaoRecolherHtml, dfValor); }
+                        if (modoVisualizacaoCardsOperacao === "recolhido" && !cardEstaExpandido) { card.classList.add("modo-recolhido"); card.innerHTML = `<div class="card-operacao-topo"><div class="card-operacao-titulo"><div class="card-operacao-equipamento" title="${equipamentoSeguro}">${equipamentoSeguro}</div>${montarBolhaEventosHM(item)}</div></div>`; }
+                        else { if (cardEstaExpandido) card.classList.add("card-expandido-operacao"); const botaoRecolherHtml = ""; card.innerHTML = montarHtmlCardOperacaoCompleto(item, modelo, dfTexto, botaoRecolherHtml, dfValor); }
+                        if (modoVisualizacaoCardsOperacao === "recolhido") {
+                            card.classList.add("card-clicavel-operacao");
+                            card.title = cardEstaExpandido ? "Clique para recolher" : "Clique para expandir";
+                            card.addEventListener("click", function (ev) { if (ev.target.closest("button, a, input, select")) return; alternarExpansaoCardOperacao(item.equipamento); });
+                        }
                         grade.appendChild(card);
                     });
                     secao.appendChild(cabecalhoFrota);
